@@ -1,0 +1,67 @@
+Serilog:
+  Using: [ "Serilog.Sinks.Console", "Serilog.Sinks.Loki" ]
+  MinimumLevel:
+    Default: Information
+    Override:
+      SS14: Debug
+      Microsoft: "Warning"
+      Microsoft.Hosting.Lifetime: "Information"
+      Microsoft.AspNetCore: Warning
+
+  WriteTo:
+    - Name: Console
+      Args:
+        OutputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3} {SourceContext}] {Message:lj}{NewLine}{Exception}"
+
+  #Enrich: [ "FromLogContext" ]
+
+  #Loki:
+  #  Address: "http://localhost:3100"
+  #  Name: "Test"
+
+# Important if using Git update method
+BaseUrl: "http://localhost:5000/"
+
+Servers:
+  Instances:
+    example:
+      # This is intended to be the "human" name of the instance.
+      # In practice, this is occasionally used in logging.
+      # It doesn't affect game.hostname, for example.
+      Name: "WatchdogTest"
+
+      # This is the API token for external access.
+      # (As opposed to the API token used internally between the Watchdog and game server.
+      #  That is randomly generated.)
+      ApiToken: "you should choose a better token"
+
+      # Somewhat misleadingly, this is the port of the game server on localhost.
+      # This will NOT be automatically synchronized with the real port in the config.
+      ApiPort: 1212
+
+      # The update type and further options control where the server software is acquired from.
+      # This example is for the official server builds.
+      UpdateType: "Manifest"
+      Updates:
+        ManifestUrl: "https://wizards.cdn.spacestation14.com/fork/wizards/manifest"
+
+      # The server is expected to ping the Watchdog occastionally.
+      # (The aforementioned BaseUrl is passed to the server to facilitate this.)
+      # This confirms the server has not, say, crashed.
+      # If it has crashed, the server is forcibly restarted.
+      # However, startup can a bit of a long process on some systems.
+      TimeoutSeconds: 60
+      # If enabled, if a freeze occurs, data on the state of the server is saved for analysis.
+      # DumpOnTimeout: true
+      # TimeoutDumpType controls how this is set, but I'm not sure on the details.
+
+      # The program used to run the server can be set from here.
+      # Note that realistically, this shouldn't need to be changed unless you are:
+      # A. Trying to perform more advanced diagnostics (i.e. attaching a debugger)
+      # B. Doing something very different from running a Space Station 14 server
+      # RunCommand: "./wrapper.sh"
+
+      # Environment variables can be set from here.
+      # See for example Performance Tweaks in the Server Operator's Handbook.
+      # EnvironmentVariables:
+      #   ROBUST_NUMERICS_AVX: "true"

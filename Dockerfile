@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+FROM mcr.microsoft.com/dotnet/sdk:9.0
 WORKDIR /build
 
 RUN git clone --recursive https://github.com/space-wizards/SS14.Watchdog
